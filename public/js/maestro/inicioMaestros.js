@@ -81,18 +81,26 @@ async function tablaAlumno() {
             const apellidosPapa = alumno.apellidos_papa || '';
 
             tr.innerHTML = `
-                    <td class="ps-4 text-start fw-bold text-dark">${alumno.alumnos_nombre} ${alumno.alumnos_app} ${alumno.alumnos_apm}</td>
-                    <td class="ps-4 text-start fw-bold text-dark">${nombrePapa} ${apellidosPapa}</td>
-                    <td class="ps-4 text-start fw-bold text-dark">${alumno.alumnos_tarea || 'Sin tarea'}</td>
-                    <td class="ps-4 text-start fw-bold text-dark">${fechaLimpia || 'S/F'}</td>
-                    <td class="ps-4 pe-4 d-flex justify-content-center gap-2">
-                        <button class="btn btn-sm" onclick="abrirModalEditar('${alumno.idAlumno}','${alumno.alumnos_nombre}','${alumno.alumnos_app}','${alumno.alumnos_apm}','${alumno.alumnos_tarea || ""}','${fechaLimpia}','${alumno.idPapa}')" style="color:#A68F78; border:1px solid #C9B59C;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        </button>
-                        <button class="btn btn-outline-danger btn-sm" onclick="confirmarEliminar('${alumno.idAlumno}')">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></svg>
-                        </button>
-                    </td>`;
+    <td data-label="Alumno" class="ps-4 text-start fw-bold text-dark">
+        ${alumno.alumnos_nombre} ${alumno.alumnos_app} ${alumno.alumnos_apm}
+    </td>
+    <td data-label="Papá" class="ps-4 text-start fw-bold text-dark">
+        ${nombrePapa} ${apellidosPapa}
+    </td>
+    <td data-label="Tarea" class="ps-4 text-start fw-bold text-dark">
+        ${alumno.alumnos_tarea || 'Sin tarea'}b
+    </td>
+    <td data-label="Fecha" class="ps-4 text-start fw-bold text-dark">
+        ${fechaLimpia || 'S/F'}
+    </td>
+    <td class="ps-4 pe-4 d-flex justify-content-center gap-2">
+        <button class="btn btn-sm" onclick="abrirModalEditar('${alumno.idAlumno}','${alumno.alumnos_nombre}','${alumno.alumnos_app}','${alumno.alumnos_apm}','${alumno.alumnos_tarea || ""}','${fechaLimpia}','${alumno.idPapa}')" style="color:#A68F78; border:1px solid #C9B59C;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="btn btn-outline-danger btn-sm" onclick="confirmarEliminar('${alumno.idAlumno}')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></svg>
+        </button>
+    </td>`;
             cuerpoTabla.appendChild(tr);
         });
     } catch (error) {

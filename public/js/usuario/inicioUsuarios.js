@@ -13,7 +13,7 @@ async function tablaAlumno() {
             tr.innerHTML = `
                 <td data-label="Nombre del alumno" class="ps-4 text-start text-muted">${alumno.nombre} ${alumno.app} ${alumno.apm}</td>
                 <td data-label="Tarea" class="ps-4 text-start text-muted">${alumno.tarea || 'Sin tarea'}</td>
-                <td data-label="Fecha limite" class="ps-4 pe-4 text-center text-muted">${fechaLimpia}</td>
+                <td data-label="Fecha limite" class="ps-4 pe-4  text-muted">${fechaLimpia}</td>
             `;
             cuerpoTabla.appendChild(tr);
         });
