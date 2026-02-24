@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <title>Panel Administrativo - Ceci Piano Studio</title>
+    <style>
+        :root {
+            --piano-beige: #F2E9E1;
+            --piano-gold: #C9B59C;
+            --piano-dark: #5a4a42;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            text-align: left;
+        }
+
+        .navbar-brand {
+            letter-spacing: 1px;
+            color: var(--piano-dark) !important;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding-top: 1rem !important;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+                text-align: center;
+            }
+
+            .table thead {
+                display: none;
+            }
+
+            /* Esconder cabecera */
+
+            .table,
+            .table tbody,
+            .table tr,
+            .table td {
+                display: block;
+                width: 100%;
+            }
+
+            .table tr {
+                margin-bottom: 15px;
+                border: 1px solid var(--piano-beige);
+                border-radius: 12px;
+                padding: 10px;
+                background: #fff;
+            }
+
+            .table td {
+                display: grid;
+                grid-template-columns: 120px 1fr;
+                /* Columna fija para etiquetas */
+                text-align: left;
+                padding: 8px 15px !important;
+                border: none !important;
+                align-items: center;
+            }
+
+            /* Inyectar etiquetas usando el atributo data-label */
+            .table td::before {
+                content: attr(data-label);
+                font-weight: 800;
+                text-transform: uppercase;
+                font-size: 0.7rem;
+                color: var(--piano-gold);
+            }
+
+            .table td:last-child {
+                border-bottom: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-light bg-white shadow-sm sticky-top py-2">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="/">
+                <i class="bi bi-shield-check me-2 text-primary"></i>
+                <span class="d-none d-sm-inline">CECI PIANO STUDIO</span>
+                <span class="d-inline d-sm-none">ADMIN</span>
+            </a>
+            <a href="/" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                <i class="bi bi-box-arrow-right"></i> Salir
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col">
+                <h2 class="fw-bold m-0" style="color: var(--piano-dark);">Control de Tareas Global</h2>
+                <p class="text-muted small text-center">Vista general de alumnos y sus maestros.</p>
+            </div>
+        </div>
+
+        <div class="admin-card">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead style="background-color: var(--piano-beige);">
+                        <tr class="small text-uppercase fw-bold">
+                            <th class="py-3">Alumno</th>
+                            <th class="py-3">Padre de familia</th>
+                            <th class="py-3">Maestro Asignado</th>
+                            <th class="py-3">Tarea</th>
+                            <th class="py-3">Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaAlumno" class="border-top-0">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-4 text-center pb-4">
+            <p class="text-muted small">
+                <i class="bi bi-info-circle me-1"></i>
+                Sincronizado en tiempo real
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/administrador/inicioAdministrador.js"></script>
+</body>
+
+</html>

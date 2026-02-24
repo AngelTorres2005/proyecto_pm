@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <title>Inicio - Maestro</title>
+    <style>
+        @media (max-width: 768px) {
+            .table thead { display: none; } 
+            
+            .table, .table tbody, .table tr, .table td { 
+                display: block; 
+                width: 100%; 
+            }
+    
+            .table tr {
+                margin-bottom: 20px;
+                border: 1px solid #F2E9E1;
+                border-radius: 15px;
+                padding: 15px;
+                background: #fff;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            }
+    
+            .table td {
+                display: grid;
+                /* 120px para la etiqueta, el resto para el texto */
+                grid-template-columns: 120px 1fr; 
+                gap: 10px;
+                text-align: left !important; /* Alineamos todo a la izquierda */
+                padding: 8px 5px !important;
+                border: none !important;
+                align-items: start;
+            }
+    
+            .table td::before {
+                content: attr(data-label);
+                font-weight: 800;
+                text-transform: uppercase;
+                font-size: 0.7rem;
+                color: #C9B59C;
+                /* Esto asegura que la etiqueta no se mueva */
+                display: inline-block; 
+            }
+    
+            /* Contenedor del contenido para que no flote */
+            .table td span, .table td div, .table td {
+                word-break: break-word; /* Evita que tareas largas rompan el diseño */
+            }
+    
+            /* Especial para los botones al final */
+            .table td:last-child {
+                display: flex;
+                justify-content: center;
+                gap: 15px;
+                margin-top: 15px;
+                padding-top: 15px !important;
+                border-top: 1px dashed #F2E9E1 !important;
+            }
+            
+            .table td:last-child::before { display: none; }
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top py-2">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-dark d-flex align-items-center" href="/">
+                <i class="bi bi-music-note-beamed me-2" style="color: #C9B59C;"></i>
+                CECI PIANO STUDIO
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center mt-3 mt-lg-0">
+                    <li class="nav-item w-100">
+                        <button class="nav-link text-dark fw-medium px-3" onclick="abrirModalUsuario()">
+                            <i class="bi bi-person-gear me-1"></i> Usuario
+                        </button>
+                    </li>
+                    <li class="nav-item w-100 px-lg-2">
+                        <button class="nav-link text-dark fw-medium px-3" onclick="abrirModalAlumno()">
+                            <i class="bi bi-person-plus me-1"></i> Alumno
+                        </button>
+                    </li>
+                    <li class="nav-item w-100 ms-lg-3 mt-2 mt-lg-0">
+                        <a class="btn btn-dark rounded-pill px-4 shadow-sm" href="/">
+                            Cerrar Sesión
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-4 mt-lg-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold m-0" style="color: #5a4a42;">Control de Tareas</h2>
+            <span class="badge rounded-pill bg-soft text-dark px-3 py-2 d-none d-md-inline">Panel Maestro</span>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-6 text-start">
+                <div class="input-group shadow-sm">
+                    <span class="input-group-text bg-white border-end-0" style="border-color: #C9B59C;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A68F78" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </span>
+                    <input type="text" 
+                           id="inputBusqueda" 
+                           class="form-control border-start-0 ps-0" 
+                           placeholder="Buscar por nombre..." 
+                           style="border-color: #C9B59C;"
+                           onkeyup="filtrarMaestros()">
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-card overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-soft">
+                        <tr class="text-secondary small text-uppercase">
+                            <th class="py-3 ps-4 text-start">Alumno</th>
+                            <th class="py-3 ps-4 text-start">Papá</th>
+                            <th class="py-3 ps-4 text-start">Tarea</th>
+                            <th class="py-3 ps-4 text-start">Fecha Entrega</th>
+                            <th class="py-3 ps-4 pe-4 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaAlumno" class="border-top-0">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalAgregarAlumno" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-card border-0 shadow">
+                <div class="modal-header bg-soft border-0">
+                    <h5 class="modal-title fw-bold" style="color: #5a4a42;">Registrar Nuevo Alumno</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/agregarAlumno" method="POST">
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label small fw-bold text-muted">Nombre(s)</label>
+                            <input type="text" class="form-control form-control-lg fs-6" id="nombre" name="nombre" 
+                                   pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+" placeholder="Ej. Nora Magaly" required>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6 mb-3">
+                                <label for="app" class="form-label small fw-bold text-muted">Ap. Paterno</label>
+                                <input type="text" class="form-control" id="app" name="app" required>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label for="apm" class="form-label small fw-bold text-muted">Ap. Materno</label>
+                                <input type="text" class="form-control" id="apm" name="apm" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 bg-light">
+                        <button type="button" class="btn btn-link text-secondary text-decoration-none" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success px-4 rounded-pill">Guardar Alumno</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalAgregarUsuario" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-card border-0 shadow">
+                <div class="modal-header bg-soft border-0">
+                    <h5 class="modal-title fw-bold" id="modalUsuarioLabel" style="color: #5a4a42;">
+                        <i class="bi bi-person-plus-fill me-2"></i>Nuevo Usuario
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/agregarUsuario" method="POST">
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <label for="nombre_u" class="form-label small fw-bold text-muted">Nombre Completo</label>
+                            <input type="text" class="form-control" id="nombre_u" name="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_apellidos" class="form-label small fw-bold text-muted">Apellidos</label>
+                            <input type="text" class="form-control" id="edit_apellidos" name="apellidos" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rol" class="form-label small fw-bold text-muted">Rol del Sistema</label>
+                            <select class="form-select shadow-sm" name="rol" id="rol" required>
+                                <option value="" selected disabled>Selecciona un rol...</option>
+                                <option value="Maestro">Maestro</option>
+                                <option value="Papa">Papá</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="usuario" class="form-label small fw-bold text-muted">ID de acceso (Usuario)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control border-start-0" id="usuario" name="usuario" placeholder="usuario123" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 bg-light">
+                        <button type="button" class="btn btn-link text-secondary text-decoration-none" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn text-white px-4 rounded-pill shadow-sm" style="background-color: #C9B59C;">
+                            Crear Acceso
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalEditarAlumno" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-card border-0 shadow">
+                <div class="modal-header bg-soft border-0">
+                    <h5 class="modal-title fw-bold" style="color: #5a4a42;">Actualizar Avance</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formEditarAlumno" action="/editarAlumno" method="POST">
+                    <div class="modal-body p-4">
+                        <input type="hidden" id="edit_idAlumno" name="idAlumno">
+                        
+                        <div class="p-3 rounded bg-light mb-4 border border-dashed">
+                            <label class="small text-uppercase fw-bold text-muted d-block mb-1">Alumno Seleccionado</label>
+                            <span id="display_nombre_completo" class="fw-bold"></span>
+                            <input type="hidden" id="edit_nombre" name="nombre">
+                            <input type="hidden" id="edit_app" name="app">
+                            <input type="hidden" id="edit_apm" name="apm">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Asignar Tutor (Papá)</label>
+                            <select class="form-select shadow-sm" id="edit_idPapa" name="idPapa" required>
+                                <option value="" disabled selected>Selecciona al tutor...</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edit_tarea" class="form-label small fw-bold text-muted">Tarea o Ejercicio</label>
+                            <textarea class="form-control" id="edit_tarea" name="tarea" rows="3" placeholder="Ej. Escala de Do Mayor..."></textarea>
+                        </div>
+
+                        <div class="mb-0">
+                            <label for="edit_fecha" class="form-label small fw-bold text-muted">Fecha de Práctica</label>
+                            <input type="date" class="form-control shadow-sm" id="edit_fecha" name="fecha">
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 bg-light">
+                        <div class="d-flex w-100 gap-2">
+                            <button type="button" class="btn btn-outline-secondary w-50 rounded-pill" data-bs-dismiss="modal">Salir</button>
+                            <button type="submit" class="btn text-white w-50 rounded-pill shadow-sm" style="background-color: #C9B59C;">
+                                Actualizar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/maestro/inicioMaestros.js"></script>
+</body>
+</html>
