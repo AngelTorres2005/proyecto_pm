@@ -35,6 +35,18 @@ function urlBase64ToUint8Array(base64String) {
     return output;
 }
 
+async function ensureServiceWorkerRegistered() {
+    if (!('serviceWorker' in navigator)) return null;
+    try {
+        const reg = await navigator.serviceWorker.register('/worker.js');
+        await navigator.serviceWorker.ready;
+        return reg;
+    } catch (e) {
+        console.error('No se pudo registrar el Service Worker:', e);
+        return null;
+    }
+}
+
 async function activarNotificaciones() {
     const banner = document.getElementById('notificacionesBanner');
     const texto = document.getElementById('notificacionesTexto');
@@ -43,6 +55,13 @@ async function activarNotificaciones() {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
         texto.textContent = 'Tu navegador no soporta notificaciones push.';
         if (btn) btn.remove();
+        return;
+    }
+
+    // Push requiere "secure context": HTTPS o localhost. En LAN/IP casi siempre falla.
+    if (!window.isSecureContext) {
+        texto.textContent = 'Las notificaciones push requieren HTTPS (o abrirlo como localhost).';
+        if (btn) { btn.disabled = false; btn.textContent = 'Entendido'; }
         return;
     }
 
@@ -71,8 +90,12 @@ async function activarNotificaciones() {
         }
 
         texto.textContent = 'Conectando con el servicio de notificaciones…';
-        const register = await navigator.serviceWorker.register('/worker.js');
-        await register.ready;
+        const register = await ensureServiceWorkerRegistered();
+        if (!register) {
+            texto.textContent = 'No se pudo iniciar el Service Worker. Revisa que estés en HTTPS/localhost.';
+            if (btn) { btn.disabled = false; btn.textContent = 'Reintentar'; }
+            return;
+        }
 
         const keyBytes = urlBase64ToUint8Array(PUBLIC_VAPID_KEY);
         const subscription = await register.pushManager.subscribe({
@@ -109,7 +132,8 @@ async function activarNotificaciones() {
 
 async function guardarSuscripcionSiExiste() {
     try {
-        const register = await navigator.serviceWorker.ready;
+        const register = await ensureServiceWorkerRegistered();
+        if (!register) return;
         const sub = await register.pushManager.getSubscription();
         if (sub) {
             await fetch('/guardar-suscripcion', {

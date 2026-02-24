@@ -90,7 +90,19 @@ const editarAlumno = async (req, res) => {
                     message: `Se ha asignado: ${tarea || 'una tarea'}`,
                     url: '/login'
                 });
-                await webpush.sendNotification(sub, payload);
+                try {
+                    await webpush.sendNotification(sub, payload);
+                } catch (pushErr) {
+                    // Si la suscripción expiró o ya no existe, la limpiamos para no fallar siempre
+                    const statusCode = pushErr?.statusCode;
+                    if (statusCode === 404 || statusCode === 410) {
+                        await pool.query(
+                            'UPDATE usuarios SET push_subscription = $1 WHERE "idUsuario" = $2',
+                            [null, idPapa]
+                        );
+                    }
+                    console.error('Error al enviar push:', statusCode || pushErr?.code, pushErr?.body || pushErr?.message);
+                }
             }
         }
         res.redirect('/maestro/inicioMaestros?status=alumnoActualizado');
