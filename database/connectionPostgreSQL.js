@@ -4,7 +4,10 @@ const dotenv = require('dotenv')
 dotenv.config();
 
 const pool=new pg.Pool({
-    connectionString: process.env.DATABASE_URL
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false 
+    }
 });
 
 module.exports = { pool };
