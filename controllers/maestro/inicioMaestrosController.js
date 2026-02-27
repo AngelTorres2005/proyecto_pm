@@ -20,21 +20,24 @@ const tablaAlumno = async (req, res) => {
     try {
         const idMaestro = req.session.idUsuario;
         const consulta = `SELECT
-        alumnos."idAlumno" AS "idAlumno",
-        alumnos.nombre AS alumnos_nombre,
-        alumnos.app AS alumnos_app,
-        alumnos.apm AS alumnos_apm,
-        alumnos."idPapa" AS "idPapa",
-        papa.nombre AS nombre_papa,
-        papa.apellidos AS apellidos_papa,
-        alumnos.tarea AS alumnos_tarea,
-        alumnos.fecha AS alumnos_fecha
-        FROM alumnos
-        -- Primer JOIN: Para validar la relación con el maestro
-        INNER JOIN usuarios AS maestro ON alumnos."idMaestro" = maestro."idUsuario"
-        -- Segundo JOIN: Para traer los datos del papá
-        LEFT JOIN usuarios AS papa ON alumnos."idPapa" = papa."idUsuario"
-        WHERE alumnos."idMaestro" = $1 ORDER BY alumnos_nombre ASC;`;
+                alumnos."idAlumno",
+                alumnos.nombre AS alumnos_nombre,
+                alumnos.app AS alumnos_app,
+                alumnos.apm AS alumnos_apm,
+                alumnos."idPapa",
+                -- Datos del Papá (Usamos COALESCE por si es NULL)
+                COALESCE(papa.nombre, 'Sin asignar') AS nombre_papa,
+                COALESCE(papa.apellidos, '') AS apellidos_papa,
+                COALESCE(papa.usuario, 'Sin usuario') AS usuario_papa, 
+                alumnos.tarea AS alumnos_tarea,
+                alumnos.fecha AS alumnos_fecha
+            FROM alumnos
+            -- Cambiamos a LEFT JOIN si quieres ver al alumno aunque el maestro no exista o sea null
+            INNER JOIN usuarios AS maestro ON alumnos."idMaestro" = maestro."idUsuario"
+            -- El LEFT JOIN es correcto para el papá por si el alumno aún no tiene tutor
+            LEFT JOIN usuarios AS papa ON alumnos."idPapa" = papa."idUsuario"
+            WHERE alumnos."idMaestro" = $1 
+            ORDER BY alumnos.nombre ASC;`;
         const valores = [idMaestro];
         const datos = await pool.query(consulta, valores);
         res.json(datos.rows);
@@ -52,12 +55,12 @@ const agregarUsuario = async (req, res) => {
         const resultadoVerificarUsuario = await pool.query(consultaVerificarUsuario, valoresVerificarUsuario);
         if (resultadoVerificarUsuario.rows.length > 0) {
             return res.redirect('/maestro/inicioMaestros?status=usuarioExistente');
-        } else{
-        const idAsignado = req.session.idUsuario;
-        const consulta = 'insert into usuarios(nombre,apellidos,rol,usuario,"idAsignado",push_subscription) values($1,$2,$3,$4,$5,$6)';
-        const valores = [nombre, apellidos, rol, usuario, idAsignado, null];
-        await pool.query(consulta, valores);
-        res.redirect('/maestro/inicioMaestros?status=usuarioAgregado');
+        } else {
+            const idAsignado = req.session.idUsuario;
+            const consulta = 'insert into usuarios(nombre,apellidos,rol,usuario,"idAsignado",push_subscription) values($1,$2,$3,$4,$5,$6)';
+            const valores = [nombre, apellidos, rol, usuario, idAsignado, null];
+            await pool.query(consulta, valores);
+            res.redirect('/maestro/inicioMaestros?status=usuarioAgregado');
         }
     } catch (error) {
         console.error(error);
@@ -68,9 +71,9 @@ const agregarUsuario = async (req, res) => {
 const editarAlumno = async (req, res) => {
     try {
 
-        const { idAlumno, nombre, app ,apm , idPapa, tarea, fecha } = req.body;
+        const { idAlumno, nombre, app, apm, idPapa, tarea, fecha } = req.body;
         const consulta = 'UPDATE alumnos SET nombre=$1,app=$2,apm=$3,"idPapa"=$4,tarea=$5,fecha=$6 where "idAlumno" = $7'
-        const valores = [nombre, app,apm, idPapa, tarea, fecha, idAlumno];
+        const valores = [nombre, app, apm, idPapa, tarea, fecha, idAlumno];
 
         await pool.query(consulta, valores);
 
@@ -116,21 +119,21 @@ const selectPapa = async (req, res) => {
         const idAsignado = req.session.idUsuario;
         const consulta = `select "idUsuario",nombre,apellidos from usuarios where rol='Papa' AND "idAsignado"=$1 order by nombre asc`;
         const valores = [idAsignado]
-        const resultado = await pool.query(consulta,valores);
+        const resultado = await pool.query(consulta, valores);
         res.json(resultado.rows);
     } catch (error) {
         console.error(error)
     }
 }
 
-const eliminarAlumno = async(req,res)=>{
-    try{
+const eliminarAlumno = async (req, res) => {
+    try {
         const id = req.params.id;
-    const consulta = 'delete from alumnos where "idAlumno"=$1'
-    const valores = [id];
-    await pool.query(consulta,valores);
-    res.redirect('/maestro/inicioMaestros?status=alumnoEliminado')
-    }catch(error){
+        const consulta = 'delete from alumnos where "idAlumno"=$1'
+        const valores = [id];
+        await pool.query(consulta, valores);
+        res.redirect('/maestro/inicioMaestros?status=alumnoEliminado')
+    } catch (error) {
         res.redirect('/maestro/inicioMaestros?status=alumnoNoEliminado')
         console.error(error);
     }

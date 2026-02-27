@@ -76,7 +76,6 @@ async function tablaAlumno() {
         alumnos.forEach(alumno => {
             const fechaLimpia = alumno.alumnos_fecha ? alumno.alumnos_fecha.split('T')[0] : '';
             const tr = document.createElement('tr');
-            console.log(alumno.idPapa);
             const nombrePapa = alumno.nombre_papa || 'Sin asignar';
             const apellidosPapa = alumno.apellidos_papa || '';
 
@@ -86,6 +85,9 @@ async function tablaAlumno() {
     </td>
     <td data-label="Papá" class="ps-4 text-start fw-bold text-dark">
         ${nombrePapa} ${apellidosPapa}
+    </td>
+    <td data-label="Tarea" class="ps-4 text-start fw-bold text-dark">
+        ${alumno.usuario_papa || 'Sin usuario asignado'}
     </td>
     <td data-label="Tarea" class="ps-4 text-start fw-bold text-dark">
         ${alumno.alumnos_tarea || 'Sin tarea'}b
