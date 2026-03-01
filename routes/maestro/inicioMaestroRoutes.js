@@ -8,4 +8,5 @@ router.post('/agregarUsuario', inicioMaestrosController.agregarUsuario);
 router.post('/editarAlumno',inicioMaestrosController.editarAlumno);
 router.get('/selectPapa',inicioMaestrosController.selectPapa);
 router.get('/eliminarAlumno/:id',inicioMaestrosController.eliminarAlumno)
+router.post('/eliminarPapa',inicioMaestrosController.eliminarPapa)
 module.exports = router;

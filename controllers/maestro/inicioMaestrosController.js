@@ -139,4 +139,17 @@ const eliminarAlumno = async (req, res) => {
     }
 };
 
-module.exports = { agregarAlumno, tablaAlumno, agregarUsuario, editarAlumno, selectPapa, eliminarAlumno };
+const eliminarPapa = async (req, res) => {
+    try {
+        const { idPapa } = req.body;
+        const consulta = 'delete from usuarios where "idUsuario"=$1'
+        const valores = [idPapa];
+        await pool.query(consulta, valores);
+        res.redirect('/maestro/inicioMaestros?status=papaEliminado');
+    }catch(error){
+        console.error(error);
+        res.redirect('/maestro/inicioMaestros?status=error');
+    }
+}
+
+module.exports = { agregarAlumno, tablaAlumno, agregarUsuario, editarAlumno, selectPapa, eliminarAlumno, eliminarPapa };

@@ -1,9 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     sweetAlert();
     tablaAlumno();
-    selectPapa();
+    selectPapa('edit_idPapa');
+    selectPapa('edit_idPapa2');
 });
-
+const abrirModalEliminarPapa = () => {
+    const modal = new bootstrap.Modal(document.getElementById('modalEliminarPapa'));
+    modal.show();
+};
 function abrirModalAlumno() {
     const modalPago = new bootstrap.Modal(document.getElementById('modalAgregarAlumno'));
     modalPago.show();
@@ -61,6 +65,18 @@ function sweetAlert() {
         Swal.fire({
             icon: 'error',
             title: 'El usuario ya existe',
+            confirmButtonColor: '#C9B59C'
+        })
+    } else if (status === 'papaEliminado') {
+        Swal.fire({
+            icon: 'success',
+            title: 'Papá eliminado con exito',
+            confirmButtonColor: '#C9B59C'
+        })
+    } else if (status === 'error') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Hubo un error al eliminar al papá',
             confirmButtonColor: '#C9B59C'
         })
     }
@@ -127,12 +143,12 @@ function abrirModalEditar(idAlumno, nombre, appAlumno, apmAlumno, tarea, fecha, 
     const modalPago = new bootstrap.Modal(document.getElementById('modalEditarAlumno'));
     modalPago.show();
 }
-async function selectPapa() {
+async function selectPapa(id) {
     try {
         const respuesta = await fetch('/selectPapa');
         const papas = await respuesta.json();
 
-        const selectElement = document.getElementById('edit_idPapa');
+        const selectElement = document.getElementById(id);
 
         selectElement.innerHTML = '<option value="" disabled selected>Selecciona al tutor...</option>';
 
