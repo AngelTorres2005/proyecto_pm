@@ -86,7 +86,7 @@ async function tablaAlumno() {
     <td data-label="Papá" class="ps-4 text-start fw-bold text-dark">
         ${nombrePapa} ${apellidosPapa}
     </td>
-    <td data-label="Tarea" class="ps-4 text-start fw-bold text-dark">
+    <td data-label="Usuario" class="ps-4 text-start fw-bold text-dark">
         ${alumno.usuario_papa || 'Sin usuario asignado'}
     </td>
     <td data-label="Tarea" class="ps-4 text-start fw-bold text-dark">
